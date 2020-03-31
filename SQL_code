@@ -1,0 +1,271 @@
+Select *
+From _ :
+# full data set
+
+select <column>
+From <data> ;
+#select columns
+
+Select distinct _
+From _ ;
+#show unique entries from selected column
+
+select *
+from emp
+where job = ‘MANAGER'
+
+select *
+from emp
+where job = ‘MANAGER'
+And sal != 1600
+And sal > 2400
+
+select HIREDATE, ename from emp
+where deptno = 30
+Or deptno = 20
+
+select HIREDATE, ename from emp
+where deptno in (20,30)
+
+select * from emp
+where COMM is not NULL;
+
+select * from emp
+where COMM is  NULL;
+
+select * from emp
+where sal between 1000 and 5000
+
+select *
+from EMP
+where COMM is NULL
+and sal > 1100 and sal < 5000
+and SAL != 3000
+OR COMM = 0
+
+select *
+from EMP
+WHERE JOB LIKE ’S%'
+
+UPPER()
+LOWER()
+INITCAP()
+LPAD() , RPAD()
+LTRIM(), RTRIM()
+TRUNC()
+ROUND()
+SUBSTR()
+ADD_MONTHS()
+LENGTH()
+SYSTDATE
+SYSTIMESTAMP
+
+SELECT ENAME,HIREDATE,TRUNC(HIREDATE, 'MONTH')
+FROM EMP
+WHERE TRUNC(HIREDATE,'YEAR') = ’01/01/1982'
+
+SELECT TO_CHAR(SYSDATE, 'MM-DD-YYYY')
+FROM DUAL
+NVL()
+
+#GROUPING FUNCTIONS: (CANT USE IN WHERE CLAUSE)—HAVING
+MAX()
+MIN()
+SUM()
+AVG()
+COUNT() #TOTAL NUM OF DATA POINTS
+
+GROUP BY:
+SELECT AVG(SAL), JOB
+FROM EMP
+GROUP BY JOB
+
+USING HAVING
+
+SELECT
+FROM
+WHERE
+GROUP BY
+HAVING
+ORDER BY
+
+
+NESTED: 
+
+SELECT * FROM DEPT
+WHERE DEPTNO < (SELECT DEPTNO FROM DEPT WHERE DEPTNO = 30)
+AND DNAME = ‘ACCOUNTING'
+
+SAME AS
+
+SELECT * FROM DEPT
+WHERE DEPTNO < 30
+AND DNAME = 'ACCOUNTING'
+
+SELECT * FROM EMP
+WHERE DEPTNO = (SELECT DEPTNO FROM DEPT WHERE LOC = 'CHICAGO' )
+
+#JOINS:
+
+SELECT *
+FROM EMP, DEPT
+WHERE EMP.DEPTNO = DEPT.DEPTNO
+
+SELECT ENAME, JOB, SAL
+FROM EMP, DEPT
+WHERE EMP.DEPTNO = DEPT.DEPTNO
+AND DEPT.LOC = ‘DALLAS'
+
+SELECT EMP.ENAME AS NAME, EMP.JOB, EMP.SAL AS SALARY
+FROM EMP, DEPT
+WHERE EMP.DEPTNO = DEPT.DEPTNO
+AND DEPT.LOC = ‘DALLAS'
+
+#TABLES WITH ALIAS:
+
+SELECT EMP.ENAME AS NAME, EMP.JOB, EMP.SAL AS SALARY
+FROM EMP , DEPT E
+WHERE EMP.DEPTNO = E.DEPTNO
+AND E.LOC = ‘DALLAS'
+
+SELECT E.ENAME AS NAME, E.JOB, E.SAL AS SALARY
+FROM (SELECT * FROM EMP WHERE JOB IN ('MANAGER', 'CLERK')) E , DEPT D
+WHERE E.DEPTNO = D.DEPTNO
+AND D.LOC = 'DALLAS'
+
+SELECT E.ENAME AS NAME, E.JOB, E.SAL AS SALARY,
+FROM (SELECT * FROM EMP WHERE JOB IN ('MANAGER', 'CLERK')) E , (SELECT * FROM DEPT WHERE LOC = 'DALLAS') D
+WHERE E.DEPTNO = D.DEPTNO
+
+
+
+
+
+
+#INNER JOIN
+SELECT *
+FROM emp INNER JOIN dept
+ON emp.deptno = dept.deptno
+
+SELECT *
+FROM emp LEFT JOIN dept
+ON emp.deptno = dept.deptno
+
+SELECT *
+FROM emp RIGHT JOIN dept
+ON emp.deptno = dept.deptno
+
+#same but different syntax
+SELECT *
+FROM DEPT LEFT OUTER JOIN EMP
+ON emp.deptno = dept.deptno
+
+SELECT *
+FROM EMP FULL OUTER JOIN DEPT
+ON emp.DEPTNO = dept.DEPTNO
+
+
+SELECT E.* , D.*
+FROM  DEPT D LEFT OUTER JOIN (SELECT * FROM emp where job = 'SALESMAN') E
+ON e.DEPTNO = d.DEPTNO
+
+#CORRELATED SUBQUERRIES:
+SELECT * FROM dept d
+WHERE EXISTS (SELECT * FROM emp WHERE d.deptno = emp.deptno)
+
+SELECT * FROM dept d
+WHERE NOT EXISTS (SELECT * FROM emp WHERE d.deptno = emp.deptno)
+
+#CASE STATEMENTS
+
+SELECT ename, job, (CASE job
+    WHEN 'PRESIDENT' THEN 'big shot'
+    WHEN 'MANAGER' THEN 'decides pay'
+    WHEN 'ANALYST' THEN 'good at maths'
+    WHEN 'CLERK' THEN 'hard working'
+    ELSE 'no comment'
+    END) AS "COMMENT"
+FROM EMP;
+
+SELECT ename, job, sal, (CASE
+    WHEN sal >= 3000 THEN 'big shot'
+    WHEN sal < 3000 THEN 'more pay'
+    END) AS pay_comment
+FROM EMP;
+
+
+
+
+SELECT ename
+    ,job
+    ,sal
+    ,(CASE WHEN sal >= 3000 THEN 'big shot'
+        WHEN sal < 3000 THEN 'more pay'
+            END) AS pay_comment
+FROM EMP;
+
+
+#CREATING TABLES
+
+CREATE TABLE stores
+(
+	store_id number not null,
+	city varchar(50)
+	);
+
+INSERT INTO stores(store_id, city)
+    VALUES (1,'SAN FRANCISCO')
+
+INSERT ALL
+    INTO STORES (store_id, city) VALUES (4, 'PHILADELPHIA')
+    INTO STORES (store_id, city) VALUES (5, 'BOSTON')
+    INTO STORES (store_id, city) VALUES (6, 'SEATTLE')
+SELECT * FROM DUAL;
+
+SELECT store_id, count(*)
+FROM STORES
+group by store_id
+order by 1
+
+CREATE TABLE products
+(
+    product_id number not null,
+    name varchar(50),
+    product_cost number(5,2),
+    product_retail number (5,2),
+    product_type varchar(10),
+    store_id number not null,
+
+    CONSTRAINT  product_pk PRIMARY KEY (product_id)
+
+
+
+INSERT INTO products VALUES (1011,'',4.00,8.00,'clothing',3)
+
+DELETE FROM products WHERE product_id = 1011
+
+ALTER TABLE products
+    MODIFY name varchar2(50) not null;
+
+DESCRIBE products
+
+ALTER TABLE products
+    MODIFY (product_cost number(5,2) not null,
+            product_retail number (5,2) not null) ;
+
+ALTER TABLE products
+    RENAME COLUMN name TO "product name”
+
+CREATE TABLE employees AS
+SELECT empno, ename, hiredate, sal, comm
+FROM emp
+
+
+ALTER TABLE employees
+    ADD store_id number;
+
+#UPDATE (adding data into a single column, not the whole set)
+
+UPDATE employees
+SET store_id = 3
+WHERE ename in (‘KING','BLAKE','CLARK')
